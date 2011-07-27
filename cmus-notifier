@@ -55,6 +55,7 @@ then
 elif test -n "${_url}"
 then
     cikti "${c_durum} ${_title}\n${_url}"
+    #echo -e "$(date +'%x %X')  ${_title}  ${_url}" >> ~/cmus-net-tracklist
 else
     cikti "${c_durum}"
 fi

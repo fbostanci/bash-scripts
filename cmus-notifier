@@ -5,7 +5,8 @@
 # Usage: in cmus command ":set status_display_program=where-is-this-script"
 
 function cikti() {
-  _cikti=`echo "$@" | sed 's:ð:ğ:g;s:Ý:İ:g;s:þ:ş:g;s:ý:ı:g;s:Þ:Ş:g'`    
+#replace some Turkish characters which are not looking properly..  
+  _cikti=`echo "$@" | sed 's:ð:ğ:g;s:Ý:İ:g;s:þ:ş:g;s:ý:ı:g;s:Þ:Ş:g;s:Ð:Ğ:g'`
   notify-send  "cmus-notifier" "${_cikti}" -t 15000 -i ${gorsel}
 }
 

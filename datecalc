@@ -1,20 +1,5 @@
 #!/bin/bash
-#
-#                   DateCalc 1.1 - Tarih Hesaplayıcı
-# GPL v3
-##           Copyright (C) 2010-2011 Fatih Bostancı <faopera@gmail.com>
-##
-##    Bu uygulama bir özgür yazılımdır: yeniden dağıtabilirsiniz ve/veya
-##    Özgür Yazılım Vakfı (FSF) tarafından yayımlanan  (GPL) Genel kamu
-##    lisansı sürüm 3  veya daha yeni bir sürümünde belirtilen şartlara
-##    uymak kaydıyla, üzerinde  değişiklik yapabilirsiniz.
-##
-##    Lisansın bir kopyasını aşağıdaki adresten edinebilirsiniz.
-##    <http://www.gnu.org/licenses/>
-##
-##
-#
-#
+# Copyright 2011 Fatih Bostancı <faopera@gmail.com>
 
 [ ${#} -eq 0 ] && {
   birim=1

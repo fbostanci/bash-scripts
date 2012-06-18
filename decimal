@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyrigtht 2011 Fatih Bostancı <faopera@gmail.com>
+# Copyrigtht 2011-2012 Fatih Bostancı <faopera@gmail.com>
 
 # not: dosyalar betikle aynı dizinde değilse, dosyalar tam konumuyla beraber girilmeli.
 IP_DOSYASI=ip

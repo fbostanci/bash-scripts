@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2011 Fatih Bostancı <faopera@gmail.com>
+# Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
 
 [ ${#} -eq 0 ] && {
   birim=1

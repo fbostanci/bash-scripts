@@ -1,11 +1,13 @@
 #!/bin/bash
 # Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
+# v1.0.2
+
 
 # şehir adı girilirse $1 önemsenmeyecek.
 SEHIR=""
 
-
 set -e
+degerler=()
 sehirler=( ADANA ADIYAMAN AFYONKARAHISAR AGRI AMASYA ANKARA ANTALYA ARTVIN AYDIN
            BALIKESIR BILECIK BINGOL BITLIS BOLU BURDUR BURSA CANAKKALE CANKIRI
            CORUM DENIZLI DIYARBAKIR EDIRNE ELAZIG ERZINCAN ERZURUM ESKISEHIR
@@ -17,13 +19,12 @@ sehirler=( ADANA ADIYAMAN AFYONKARAHISAR AGRI AMASYA ANKARA ANTALYA ARTVIN AYDIN
            KARAMAN KIRIKKALE BATMAN SIRNAK BARTIN ARDAHAN IGDIR YALOVA KARABUK
            KILIS OSMANIYE DUZCE )
 
-
-
 if [[ -n ${SEHIR} ]]
 then
     sehir="${SEHIR}"
 elif [[ -n $1 ]]
 then
+    [[ $1 =~ ^0 ]] && s=${1/0/} || s=$1
     if [[ -n $(tr -d 0-9 <<<$1) ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
@@ -32,15 +33,10 @@ then
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
         exit 1
-    elif [[ $1 -gt 81 ]]
+    elif [[ $s -gt 81 ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
         exit 1
-    elif [[ $1 =~ ^0 ]]
-    then
-        s=$(sed 's:0::' <<<$1)
-    else
-        s=$1
     fi
     sehir=${sehirler[((s-1))]}
 else
@@ -49,17 +45,21 @@ else
 fi
 
 wget --quiet --timeout=15 --tries=3 -O- "http://www.dmi.gov.tr/tahmin/il-ve-ilceler.aspx?m=${sehir}#sfB" | sed -n \
-  '/<div id="divSonDurum">/,/<\/div>/ s:<td><em class="renk.*">\(.*\)\&.*:\1 °C:p
+  '{/<div id="divSonDurum">/,/<\/div>/ s:<td><em class="renk.*">\(.*\)\&.*:\1 °C:p
   s:<td><em>\(.*\)</em></td>:\1:p
   s:<td><img.*title="\(.*\)" /> <br /><em>\(.*\)</em></td>:\1\n\2:p
-  s:<td class="sond_zaman">\(.*\)<br .>\(.*\)</td>:\1\n\2:p' > /tmp/hava-sonuclari-$$
+  s:<td class="sond_zaman">\(.*\)<br .>\(.*\)</td>:\1\n\2:p}' > /tmp/hava-sonuclari-$$
 
-degerler=()
 while read -r satir
 do
   degerler+=("${satir}")
 done < /tmp/hava-sonuclari-$$
+
 rm -f /tmp/hava-sonuclari-$$ &>/dev/null
+[[ ${degerler[1]} =~ ^Güncel ]] && {
+  degerler[0]="Sayfada bilgiler güncelleniyor..."
+  degerler[1]=
+}
 
 printf '\n%-20s%b\n%-21s%b\n%-19s%b\n%-21s%b\n%-22s%b\n%-22s%b\n%-25s%b\n%-20s%b\n' \
   'Şehir' "= ${sehir}" \

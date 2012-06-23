@@ -24,7 +24,7 @@ then
     sehir="${SEHIR}"
 elif [[ -n $1 ]]
 then
-    [[ $1 =~ ^0 ]] && s=$(sed 's:^0*[1-9]::g' <<<$1) || s=$1
+    [[ $1 =~ ^0 ]] && s=${1/0/} || s=$1
     if [[ -n $(tr -d 0-9 <<<$s) ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2

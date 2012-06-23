@@ -1,6 +1,6 @@
 #!/bin/bash
-# Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
-# v1.0.2
+# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# v1.0.3
 
 
 # şehir adı girilirse $1 önemsenmeyecek.
@@ -24,7 +24,7 @@ then
     sehir="${SEHIR}"
 elif [[ -n $1 ]]
 then
-    [[ $1 =~ ^0 ]] && s=${1/0/} || s=$1
+    [[ $1 =~ ^0 ]] && s=$(sed 's:^0*[1-9]::g' <<<$1) || s=$1
     if [[ -n $(tr -d 0-9 <<<$s) ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
@@ -33,7 +33,7 @@ then
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
         exit 1
-    elif [[ $s -gt 81 ]]
+    elif [[ $s -gt ${#sehirler[@]} || $s -eq 0 ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
         exit 1
@@ -71,4 +71,4 @@ printf '\n%-20s%b\n%-21s%b\n%-19s%b\n%-21s%b\n%-22s%b\n%-22s%b\n%-25s%b\n%-20s%b
   'Görüş uzaklığı' "= ${degerler[7]}" \
   'Son güncelleme' "= ${degerler[0]} ${degerler[1]}"
 
-# vim: set ts=2 sw=2 noet:
+# vim: set ts=2 sw=2 et:

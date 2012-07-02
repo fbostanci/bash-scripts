@@ -1,5 +1,8 @@
 #!/bin/bash
 # Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
+#v1.0.1
+
+# TODO: Gelişmiş yollarla yeniden yazılacak.
 
 [ ${#} -eq 0 ] && {
   birim=1
@@ -46,12 +49,12 @@ sonuc_yil=$(($sonuc_yil_ref/12))
 simdi_saniye=`date --date='now' +%s`
 sonuc_saniye=`expr $simdi_saniye - $secilen_tarih_saniye`
 
-sonuc_saat=$(($sonuc_saniye/3600))
-sonuc_dakika=$(($sonuc_saniye/60))
-sonuc_gun=$(($sonuc_saniye/86400))
-sonuc_ay=$(($sonuc_gun/30))
+sonuc_saat=$((sonuc_saniye/3600))
+sonuc_dakika=$((sonuc_saniye/60))
+sonuc_gun=$((sonuc_saniye/86400))
+sonuc_ay=$((sonuc_gun/30))
 
-sonuc_24=$(printf '%d saat'' : ''%d dakika'' : ''%d saniye' $(($sonuc_saat%24)) $(($sonuc_dakika%60)) $(($sonuc_saniye%60)))
+sonuc_24=$(printf '%d saat : %d dakika : %d saniye' $((sonuc_saat%24)) $((sonuc_dakika%60)) $((sonuc_saniye%60)))
 
 tarih_duzen=$(echo $secilen_tarih | gawk -F'/' 'BEGIN{OFS="/";} {print $2,$1,$3;}')
 saat_duzen=$(echo $secilen_saat | sed 's:[0-9][0-9]:&\::')

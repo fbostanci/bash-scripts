@@ -1,7 +1,10 @@
 #!/bin/bash
-# Copyright 2011 Fatih Bostancı <faopera@gmail.com>
+# Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
+#v1.0
 
-export name=${0##*/}
+# TODO: Gelişmiş yollarla yeniden yazılacak.
+
+name=${0##*/}
 SARI="\033[1;33m"
 YESiL="\033[1;32m"
 SON="\033[0m"
@@ -10,7 +13,7 @@ SON="\033[0m"
 
 [[ -e /tmp/${name}_pid ]] && {
 
-[[ $(ps -p $(cat /tmp/${name}_pid) -o comm=) = ${name} ]] && { hata_ver=0; } || {
+[[ $(ps -p $( < /tmp/${name}_pid) -o comm=) = ${name} ]] && { hata_ver=0; } || {
     pgrep -o ${name} > /tmp/${name}_pid; }
 } || {
       pgrep -o ${name} > /tmp/${name}_pid

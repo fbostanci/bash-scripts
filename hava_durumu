@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright 2012 Fatih Bostancı <faopera@gmail.com>
-# v1.0.4
+# v1.0.5
 
 
 # şehir adı girilirse $1 önemsenmeyecek.
@@ -26,10 +26,6 @@ elif [[ -n $1 ]]
 then
     [[ $1 =~ ^0 ]] && s=$(sed 's:^[0]*::' <<<$1) || s=$1
     if [[ -n $(tr -d 0-9 <<<$s) ]]
-    then
-        printf "şehir trafik kodunu giriniz.\n" >&2
-        exit 1
-    elif [[ ${#s} -gt 2 ]]
     then
         printf "şehir trafik kodunu giriniz.\n" >&2
         exit 1

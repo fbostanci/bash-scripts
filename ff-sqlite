@@ -1,0 +1,16 @@
+#!/bin/bash
+#!/bin/bash
+# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# v1.0.2
+
+
+set -e
+[[ $(pgrep firefox) ]] && { printf "firefox çalışıyor.\n"; exit 1; }
+
+for veritabani in ~/.mozilla/firefox/*/*.sqlite
+do
+  printf '%-40s%s' "\`${veritabani##*/}' işleniyor..." "[B:$(du -h $veritabani|gawk '{printf "%3s\n", $1}')B -> "
+  sqlite3 $veritabani vacuum
+  sqlite3 $veritabani reindex
+  printf "S:$(du -h $veritabani|gawk '{print $1}')B]\n"
+done

@@ -11,5 +11,5 @@ do
   printf '%-40s%s' "\`${veritabani##*/}' işleniyor..." "[B:$(du -h $veritabani|gawk '{printf "%5s\n", $1}')B -> "
   sqlite3 $veritabani vacuum
   sqlite3 $veritabani reindex
-  printf "S: $(du -h $veritabani|gawk '{print $1}')B]\n"
+  printf "S:$(du -h $veritabani|gawk '{printf "%5s%s", $1,"B]"}')\n"
 done

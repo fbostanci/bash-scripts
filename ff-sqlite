@@ -1,15 +1,18 @@
 #!/bin/bash
 # Copyright 2012 Fatih Bostancı <faopera@gmail.com>
-# v1.0.2
+# v1.0.3
 
 
 set -e
+
+test -x "$(which gawk 2>/dev/null)" && AWK=gawk || AWK=awk
 [[ $(pgrep firefox) ]] && { printf "firefox çalışıyor.\n"; exit 1; }
 
 for veritabani in ~/.mozilla/firefox/*/*.sqlite
 do
-  printf '%-40s%s' "\`${veritabani##*/}' işleniyor..." "[B:$(du -h $veritabani|gawk '{printf "%5s\n", $1}')B -> "
+  printf '%-40s%s' "\`${veritabani##*/}' işleniyor..." \
+    "[B:$(du -h $veritabani | $AWK '{printf "%5s%s", $1,"B -> "}')"
   sqlite3 $veritabani vacuum
   sqlite3 $veritabani reindex
-  printf "S:$(du -h $veritabani|gawk '{printf "%5s%s", $1,"B]"}')\n"
+  printf "S:$(du -h $veritabani | $AWK '{printf "%5s%s", $1,"B]"}')\n"
 done

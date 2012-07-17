@@ -36,7 +36,7 @@ function kapat_penceresi() {
 [[ $# -ne 0 ]] && {
   [ ${hata_ver:-1} -eq 0 ] && { printf "${SARI}Başka bir shkapat betiği zaten çalışıyor..$SON" >&2; exit 1; }
 
-GIRDI=$(getopt -n ${name} -o 'd:s:ky' -l "dakika:,saat:,kapat,ybaslat,ybaşlat" "h" "$@")
+GIRDI=$(getopt -n ${name} -o 'd:s:ky' -l "dakika:,saat:,kapat,ybaslat,ybaşlat" -- "$@")
       (( $? == 1 )) && exit 1
 
 eval set -- "$GIRDI"
@@ -71,7 +71,7 @@ do
     done
 } || {
 
-[ ${hata_ver:-1} -eq 0 ] && { zenity --warning --text "Başka bir ${name} betiği zaten çalışıyor.." --timeout 5;  exit 1; }
+[ ${hata_ver:-1} -eq 0 ] && { yad --warning --text "Başka bir ${name} betiği zaten çalışıyor.." --timeout 5;  exit 1; }
 
 arayuz=`zenity --title "${name} seçenekleri" --width 400 --height 250 --text "<big>Seçiminizi yapın.</big>" \
         --column " #" --hide-column=2 --column " " --column "   Seçenekler" --list --radiolist \

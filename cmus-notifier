@@ -1,7 +1,9 @@
 #!/bin/bash
 # based on cmus-status-display
-
-# Depends on: cmus,bash,sed,libnotify
+# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.0.2
+# Dependencies: cmus,bash,sed,libnotify
 # Usage: in cmus command ":set status_display_program=where-is-this-script"
 
 function cikti() {

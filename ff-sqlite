@@ -1,5 +1,6 @@
 #!/bin/bash
 # Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
 # v1.0.3
 
 
@@ -14,5 +15,5 @@ do
     "[B:$(du -h $veritabani | $AWK '{printf "%5s%s", $1,"B -> "}')"
   sqlite3 $veritabani vacuum
   sqlite3 $veritabani reindex
-  printf "S:$(du -h $veritabani | $AWK '{printf "%5s%s", $1,"B]"}')\n"
+  printf "S:$(du -h $veritabani | $AWK '{printf "%5s%s\n", $1,"B]"}')"
 done

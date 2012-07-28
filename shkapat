@@ -59,7 +59,7 @@ function kapat_penceresi() {
 #          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
 #  elif test -x "$(which zenity 2>/dev/null)"
 #  then
-#            (
+#      (
 #        for ((c=5; c<=100; c+=5))
 #        {
 #           printf '%d\n' "$c"; sleep 1
@@ -112,7 +112,7 @@ do
 done
 
 (( YENIDEN_BASLAT )) && {
-  for ((i=3; i>0;i--))
+  for ((i=3; i>0; i--))
   {
     printf "%s\a\t" "$i"
     sleep 1
@@ -122,7 +122,7 @@ done
 }
 
 (( SIMDI_KAPAT )) && {
-  for ((i=3; i>0;i--))
+  for ((i=3; i>0; i--))
   {
     printf "%s\a\t" "$i"
     sleep 1

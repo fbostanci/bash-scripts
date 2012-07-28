@@ -28,9 +28,9 @@ function bilgi() {
         '    Bilgisayarı hemen kapatır.' \
         '-y, --ybaslat, ybaşlat' \
         '    Bilgisayarı hemen yeniden başlatır.' \
-        '-s, --saat' \
-        '    Girilen saatte(saat ss:dd biçiminde olmalı) bilgisayarı kapatır.' \
-        '-d, --dakika' \
+        '-s, --saat <ss:dd>' \
+        '    Girilen saatte bilgisayarı kapatır.' \
+        '-d, --dakika <dakika>' \
         '    Girilen dakika sonra bilgisayarı kapatır.' \
         '-v, --version, --surum, --sürüm' \
         '    Sürüm bilgisini gösterir.' \
@@ -49,7 +49,7 @@ function kapat_penceresi() {
   if test -x "$(which kdialog 2>/dev/null)"
   then
       set -e
-      gor=$(kdialog --icon=system-shutdown --title "Shkapat" --progressbar "kapatılıyor..." 5)
+      gor=$(kdialog --icon=system-shutdown --title "${AD^}" --progressbar "kapatılıyor..." 5)
       qdbus $gor Set org.kde.kdialog.ProgressDialog maximum 20
       for ((c=0; c<20; c++))
       {
@@ -58,6 +58,7 @@ function kapat_penceresi() {
         qdbus $gor setLabelText "$d saniye sonra sistem kapatılacak."
         ((d--)); sleep 1
       }
+      qdbus $gor close; bilg_kapat Stop
   elif test -x "$(which yad 2>/dev/null)"
   then
       (
@@ -65,7 +66,7 @@ function kapat_penceresi() {
         {
            printf '%d\n' "$c"; sleep 1
         }
-      ) | yad  --progress --percentage=5 --title="${AD^}" \
+      ) | yad --progress --percentage=5 --title="${AD^}" \
             --text "20 saniye sonra bilgisayar kapatılacak" --auto-close \
             --window-icon=gnome-shutdown --sticky --center \
             --button='Şimdi kapat:0' --button='İptal:1'
@@ -77,7 +78,7 @@ function kapat_penceresi() {
         {
            printf '%d\n' "$c"; sleep 1
         }
-      ) | zenity  --progress --percentage=5 --title="${AD^}" \
+      ) | zenity --progress --percentage=5 --title="${AD^}" \
             --text "20 saniye sonra bilgisayar kapatılacak" --auto-close
           (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
   else

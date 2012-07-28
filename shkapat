@@ -1,14 +1,14 @@
 #!/bin/bash
 # Copyright 2010-2012 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.2.0
+# v1.2.1
 
 YENIDEN_BASLAT=0
 SIMDI_KAPAT=0
 SAAT=0
 DAKIKA=0
 AD="${0##*/}"
-SURUM=1.2.0
+SURUM=1.2.1
 
 function bilgi() {
   if [[ "$1" = b ]]
@@ -45,30 +45,42 @@ function bilg_kapat() {
 }
 
 function kapat_penceresi() {
-#  if  test -x "$(which yad 2>/dev/null)"
-#  then
-#      (
-#        for ((c=5; c<=100; c+=5))
-#        {
-#           printf '%d\n' "$c"; sleep 1
-#        }
-#      ) | yad  --progress --percentage=5 --title="${AD^}" \
-#            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close \
-#            --window-icon=gnome-shutdown --sticky --center \
-#            --button='Şimdi kapat:0' --button='İptal:1'
-#          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
-#  elif test -x "$(which zenity 2>/dev/null)"
-#  then
-#      (
-#        for ((c=5; c<=100; c+=5))
-#        {
-#           printf '%d\n' "$c"; sleep 1
-#        }
-#      ) | zenity  --progress --percentage=5 --title="${AD^}" \
-#            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close
-#          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
-# TODO: kdialog eklenecek.
-#  else
+  local gor c d=20
+  if test -x "$(which kdialog 2>/dev/null)"
+  then
+      set -e
+      gor=$(kdialog --icon=system-shutdown --title "Shkapat" --progressbar "kapatılıyor..." 5)
+      qdbus $gor Set org.kde.kdialog.ProgressDialog maximum 20
+      for ((c=0; c<20; c++))
+      {
+        printf '\a'
+        qdbus $gor Set org.kde.kdialog.ProgressDialog value $c
+        qdbus $gor setLabelText "$d saniye sonra sistem kapatılacak."
+        ((d--)); sleep 1
+      }
+  elif test -x "$(which yad 2>/dev/null)"
+  then
+      (
+        for ((c=5; c<=100; c+=5))
+        {
+           printf '%d\n' "$c"; sleep 1
+        }
+      ) | yad  --progress --percentage=5 --title="${AD^}" \
+            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close \
+            --window-icon=gnome-shutdown --sticky --center \
+            --button='Şimdi kapat:0' --button='İptal:1'
+          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
+  elif test -x "$(which zenity 2>/dev/null)"
+  then
+      (
+        for ((c=5; c<=100; c+=5))
+        {
+           printf '%d\n' "$c"; sleep 1
+        }
+      ) | zenity  --progress --percentage=5 --title="${AD^}" \
+            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close
+          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
+  else
         for ((c=20; c>0; c--))
         {
            printf "\a%2d%s\r" "$c" \
@@ -76,7 +88,7 @@ function kapat_penceresi() {
            sleep 1
         }
         bilg_kapat Stop
-#  fi
+  fi
 }
 
 DES=$(getopt -n "${AD}" -o 's:d:ykhv' -l \

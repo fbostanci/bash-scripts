@@ -1,132 +1,165 @@
 #!/bin/bash
-# Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
-#v1.3
+# Copyright 2010-2012 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.2.0
 
+YENIDEN_BASLAT=0
+SIMDI_KAPAT=0
+SAAT=0
+DAKIKA=0
+AD="${0##*/}"
+SURUM=1.2.0
 
-SARI="\033[1;33m"
-YESiL="\033[1;32m"
-SON="\033[0m"
-
-[[ $UID -eq 0 ]] && {
-  printf "${SARI}shkapat yönetici haklarıyla çalışmayı reddetmektedir..$SON\n" >&2
-  exit 1
+function bilgi() {
+  if [[ "$1" = b ]]
+  then
+      printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n' \
+        "${AD^} $SURUM" \
+        'Copyright (c) 2010-2012 Fatih Bostancı'\
+        'Bu uygulama bir özgür yazılımdır: yeniden dağıtabilirsiniz ve/veya'\
+        'Özgür Yazılım Vakfı (FSF) tarafından yayımlanan (GPL)  Genel  kamu'\
+        'lisansı sürüm 3  veya daha yeni bir sürümünde belirtilen  şartlara'\
+        'uymak kaydıyla, üzerinde değişiklik yapabilirsiniz.'
+  elif [[ "$1" = y ]]
+  then
+      printf '\n\n%b\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n' \
+        "${AD} [seçenek]" \
+        '-k,--kapat' \
+        '    Bilgisayarı hemen kapatır.' \
+        '-y, --ybaslat, ybaşlat' \
+        '    Bilgisayarı hemen yeniden başlatır.' \
+        '-s, --saat' \
+        '    Girilen saatte(saat ss:dd biçiminde olmalı) bilgisayarı kapatır.' \
+        '-d, --dakika' \
+        '    Girilen dakika sonra bilgisayarı kapatır.' \
+        '-v, --version, --surum, --sürüm' \
+        '    Sürüm bilgisini gösterir.' \
+        '-h, --yardım, --yardim' \
+        '    Bu yardım çıktısını görüntüler.'
+  fi
 }
-
-[[ -e /tmp/.shkapat_pid ]] && {
-  [[ $(ps -p $( < /tmp/.shkapat_pid) -o comm=) = shkapat ]] && hata_ver=0 || pgrep -o shkapat > /tmp/.shkapat_pid
-} || pgrep -o shkapat > /tmp/.shkapat_pid
 
 function bilg_kapat() {
   dbus-send --system --print-reply --dest=org.freedesktop.ConsoleKit \
     /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.$1
 }
 
-
 function kapat_penceresi() {
-  (
-    for ((c=5; c<=100; c+=5))
-    {
-       echo -e "\a" &>/dev/null
-       echo -e "$c"; sleep 1
-    }
-  ) | yad  --progress --percentage=5 --title=shkapat --text "20 saniye sonra bilgisayar kapatılacak" --auto-close
-  (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
-    }
+#  if  test -x "$(which yad 2>/dev/null)"
+#  then
+#      (
+#        for ((c=5; c<=100; c+=5))
+#        {
+#           printf '%d\n' "$c"; sleep 1
+#        }
+#      ) | yad  --progress --percentage=5 --title="${AD^}" \
+#            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close \
+#            --window-icon=gnome-shutdown --sticky --center \
+#            --button='Şimdi kapat:0' --button='İptal:1'
+#          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
+#  elif test -x "$(which zenity 2>/dev/null)"
+#  then
+#            (
+#        for ((c=5; c<=100; c+=5))
+#        {
+#           printf '%d\n' "$c"; sleep 1
+#        }
+#      ) | zenity  --progress --percentage=5 --title="${AD^}" \
+#            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close
+#          (( $? == 1 )) &&  exit 1 || bilg_kapat Stop
+# TODO: kdialog eklenecek.
+#  else
+        for ((c=20; c>0; c--))
+        {
+           printf "\a%2d%s\r" "$c" \
+             " saniye sonra bilgisayar kapatılacak."
+           sleep 1
+        }
+        bilg_kapat Stop
+#  fi
+}
 
-[[ $# -ne 0 ]] && {
-  [ ${hata_ver:-1} -eq 0 ] && { printf "${SARI}Başka bir shkapat betiği zaten çalışıyor..$SON" >&2; exit 1; }
+DES=$(getopt -n "${AD}" -o 's:d:ykhv' -l \
+      'saat:,dakika:,ybaşlat,ybaslat,kapat,help,yardım,yardim,surum,sürüm,version' -- "$@")
+(( $? == 1 )) && exit 1
 
-GIRDI=$(getopt -n ${name} -o 'd:s:ky' -l "dakika:,saat:,kapat,ybaslat,ybaşlat" -- "$@")
-      (( $? == 1 )) && exit 1
-
-eval set -- "$GIRDI"
+eval set -- "$DES"
 
 while true
 do
   case $1 in
-    -k|--kapat)
-      shift 2
-      kdeger=$(echo $@ | sed 's:h ::')
-      [[ -n $2 ]] && { echo -e $SARI"söz dizimi hatası '$YESiL${kdeger}$SARI' "; exit 1; }
-      kbekleme=0; break ;;
-    -y|--yba[sş]lat)
-      shift 2
-      kdeger=$(echo $@ | sed 's:h ::')
-      [[ -n $2 ]] && { echo -e $SARI"söz dizimi hatası '$YESiL${kdeger}$SARI' "; exit 1; }
-      ybekleme=0; break ;;
+    -s|--saat)
+      SAAT=1
+      shift; girilen_saat="$1" ;;
     -d|--dakika)
-      [[ -n $(echo $2 | tr -d [0-9]) ]] && { echo -e $SARI"hatalı dakika..'$YESiL$2$SARI' "$SON; exit 1; } || dbekleme="$2"m
-      echo -e $YESiL"Bilgisayarınız $SARI`echo $dbekleme | sed 's:m::'`$YESiL dakika sonra kapanacak.. "$SON
-           shift ;;
-           -s|--saat)
-           [[ -n $(echo $2 | tr -d [0-9]) || ${#2} -ne 4 ]] && { echo -e $SARI"hatalı saat..'$YESiL$2$SARI' "$SON; exit 1; } || { sbekleme=$2; }
-           echo -e $YESiL"Bilgisayarınızın kapanma saati: $SARI`echo $sbekleme | sed 's:[0-9][0-9]:&\::'`"$SON
-           shift ;;
-
-           --)
-          shift
-          break ;;
-        esac
+      DAKIKA=1
+      shift; girilen_dakika="$1" ;;
+    -y|--yba[şs]lat)
+      YENIDEN_BASLAT=1 ;;
+    -k|--kapat)
+      SIMDI_KAPAT=1 ;;
+    -v|--s[uü]r[uü]m)
+      bilgi b
+      exit 0 ;;
+    -h|--yard[ıi]m)
+      bilgi y
+      exit 0 ;;
+    --)
       shift
-    done
-} || {
+      break ;;
+  esac
+  shift
+done
 
-[ ${hata_ver:-1} -eq 0 ] && { yad --warning --text "Başka bir ${name} betiği zaten çalışıyor.." --timeout 5;  exit 1; }
-
-arayuz=`zenity --title "${name} seçenekleri" --width 400 --height 250 --text "<big>Seçiminizi yapın.</big>" \
-        --column " #" --hide-column=2 --column " " --column "   Seçenekler" --list --radiolist \
-        TRUE "1" "Bilgisayarı yeniden başlat" \
-        FALSE "2" "Bilgisayarı şimdi kapat" \
-        FALSE "3" "Bilgisayarı belirtilecek dakika sonra kapat" \
-        FALSE "4" "Bilgisayarı belirtilecek saatte kapat"`
-        [ $? -eq 1 ] && exit 1
-
-    case $arayuz in
-      1)
-      ybekleme=0
-      ;;
-      2)
-      kbekleme=0
-      ;;
-      3)
-      dbekleme=`zenity --scale --text "Sistemin kaç dakika sonra kapatılacağını belirleyin (5-600 arası)" --title "${name}" \
-                --min-value=5 --max-value=600 --value=5 --step=1`
-                [ $? -eq 1 ] && exit 1
-
-      dbekleme="$dbekleme"m
-      zenity --info --text "      Bilgisayarınız\n\n             <big>`echo $dbekleme | sed 's:m::'`</big>\ndakika sonra kapanacak." \
-      --title "${name}" --timeout 5 & 
-      ;;
-      4)
-      sbekleme=`zenity --entry --text "Kapanma saatini girin (ör: 9:30 için 0930)" --title "${name} kapanış saati"`
-                [ $? -eq 1 ] && exit 1
-
-      [[ -n $(echo $sbekleme | tr -d [0-9]) || ${#sbekleme} -ne 4 ]] && {
-
-      zenity --warning --text "hatalı saat..\! \n'$sbekleme' " --title "${name}" --timeout 5; exit 1; } || {
-      zenity --info --text "Bilgisayarınızın kapanma saati \n\n<big>            `echo $sbekleme | sed 's:[0-9][0-9]:&\::'`</big>" \
-      --title "${name}" --timeout 9 & }
-      ;;
-    esac
-
+(( YENIDEN_BASLAT )) && {
+  for ((i=3; i>0;i--))
+  {
+    printf "%s\a\t" "$i"
+    sleep 1
+  }
+  printf '\n\n%s\a\n' 'Yeniden başlatılıyor...'
+  bilg_kapat Restart
 }
 
-[ ${kbekleme:-1} -eq 0 ] && bilg_kapat
-[ ${ybekleme:-1} -eq 0 ] && yeniden_baslat
-[[ -n $dbekleme ]] && { sleep $dbekleme; kapat_penceresi; }
-[[ -n $sbekleme ]] && {
-[ $sbekleme -eq $(date +%H%M) ] && kapat_penceresi
+(( SIMDI_KAPAT )) && {
+  for ((i=3; i>0;i--))
+  {
+    printf "%s\a\t" "$i"
+    sleep 1
+  }
+  printf '\n\n%s\a\n' 'Kapatılıyor...'
+  bilg_kapat Stop
+}
 
-simdi=`expr $(date +%H) \* 3600 \+ $(date +%M) \* 60 \+ $(date +%S)`
+(( DAKIKA )) && {
+  [[ -n $(tr -d 0-9 <<<$girilen_dakika) ]] && {
+    printf "%s: hatalı dakika: \`%s'\n" "$AD" "$girilen_dakika"
+    exit 1
+  }
+  bekle=$((girilen_dakika * 60))
+  printf "%s: bilgisayarınız %d dakika sonra kapatılacak.\n" "${AD}" "$girilen_dakika"
+  (( (bekle - 20) >= 0 )) && bekle=$((bekle-20))
+  sleep $bekle; kapat_penceresi
+}
 
-export $(echo $sbekleme | sed 's:[0-9][0-9]:&\ :' | gawk '{print "saat2="$1, "\ndakika2="$2}')
+(( SAAT )) && {
+  [[ $girilen_saat != @([0-2][0-9]:[0-5][0-9]) ]] && {
+    printf '%s: %s\n%s\n' "$AD" \
+      "girilen saat ya da saat biçimi hatalı." \
+      "Saati ss:dd biçiminde giriniz"
+    exit 1
+  }
 
-sbekleme=`expr $saat2 \* 3600 \+ $dakika2 \* 60` 
+  saat=$(cut -d':' -f1 <<<$girilen_saat)
+  dakika=$(cut -d':' -f2 <<<$girilen_saat)
+  saat=$(sed 's:^[0]*::' <<<$saat)
+  dakika=$(sed 's:^[0]*::' <<<$dakika)
 
-[ $sbekleme -ge $simdi ] && {
+  [[ $saat -gt 23 ]] && { printf "%s: girilen saat 23'ten büyük olamaz.\n" "$AD" >&2; exit 1; }
+  [[ $saat$dakika -ge $(date +%-H%-M) ]] && bekle=$(($(date -d "$girilen_saat" +%s) - $(date +%s))) || \
+    bekle=$((86400 - $(date +%s) + $(date -d "$girilen_saat" +%s)))
 
-bekleme_suresi=`expr $sbekleme \- $simdi` ; } || {
-bekleme_suresi=`expr 24 \* 3600 \- $simdi \+ $sbekleme`; }
-
-sleep $bekleme_suresi; kapat_penceresi
+  (( (bekle-20) >= 0 )) && bekle=$((bekle-20))
+  printf '%s: bilgisayarınızın kapatılacağı saat: %s\n' "${AD}" "$girilen_saat"
+  sleep $bekle; kapat_penceresi
 }

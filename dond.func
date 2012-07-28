@@ -1,0 +1,43 @@
+# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.0
+
+
+function dond() {
+  local dz dizin="$1" d=1 ad=${FUNCNAME[0]}
+
+  [[ "${dizin}" = @(\.|-) ]] && dizin="$(pwd)"
+
+  if [[ -d "${dizin}" ]]
+  then
+      for dz in ${dizin_dizisi[@]}
+      do
+        if [[ "${dz}" = "${dizin}" ]]
+        then
+            printf "%s: %s daha önceden eklenmiş.\n" "${ad}" "${dizin}"
+            return 1
+        fi
+      done
+      dizin_dizisi+=( "${dizin}" )
+      printf "%s: %s eklendi.\nToplam eklenmiş dizin: %d\n" "${ad}" "${dizin}" "${#dizin_dizisi[@]}"
+  elif [[ "${dizin}" = @(listele|-l) ]]
+  then
+      for dz in ${dizin_dizisi[@]}
+      do
+        printf "%d-> %s\n" "$d" "${dz}"
+        ((d++))
+      done
+  elif [[ "${dizin}" = @(s[iı]f[iı]rla|-s) ]]
+  then
+      unset dizin_dizisi && \
+        printf "%s: dizin dizisi sıfırlandı.\n" "${ad}"
+  elif [[ "${dizin:-0}" -le ${#dizin_dizisi[@]} ]]
+  then
+      [[ "${dizin}" -le 0 ]] && { printf "%s: Girilen dizin indisi 1'den küçük olamaz.\n" "${ad}"; return 1; }
+      [[ ${#dizin_dizisi[@]} -gt 0 ]] && cd "${dizin_dizisi[((dizin-1))]}" || \
+        { printf "%s: Eklenmiş dizin bulunmuyor.\n" "${ad}"; return 1; }
+  elif [[ "${dizin:-0}" -gt ${#dizin_dizisi[@]} ]]
+  then
+      printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "${#dizin_dizisi[@]}"
+  fi
+} 

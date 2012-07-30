@@ -458,7 +458,7 @@ done
     fi
   }
 
-  [[ $saat$dakika -ge $(date +%-H%-M) ]] && bekle=$(($(date -d "$girilen_saat" +%s) - $(date +%s))) || \
+  [[ $saat$dakika -gt $(date +%-H%-M) ]] && bekle=$(($(date -d "$girilen_saat" +%s) - $(date +%s))) || \
     bekle=$((86400 - $(date +%s) + $(date -d "$girilen_saat" +%s)))
 
   (( (bekle-20) > 0 )) && bekle=$((bekle-20))

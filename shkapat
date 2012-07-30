@@ -458,8 +458,8 @@ done
     fi
   }
 
-  [[ $saat$dakika -gt $(date +%-H%-M) ]] && bekle=$(($(date -d "$girilen_saat" +%s) - $(date +%s))) || \
-    bekle=$((86400 - $(date +%s) + $(date -d "$girilen_saat" +%s)))
+  [[ $saat$dakika -gt $(date +%-H%-M) ]] && { bekle=$(($(date -d "$girilen_saat" +%s) - $(date +%s))); gun=''; } || \
+    { bekle=$((86400 - $(date +%s) + $(date -d "$girilen_saat" +%s))); gun='(Yarın)'; }
 
   (( (bekle-20) > 0 )) && bekle=$((bekle-20))
   if (( ARAYUZ ))
@@ -467,18 +467,18 @@ done
       if (( arayuz == 1 ))
       then
           kdialog --title="${AD^}" --icon=system-shutdown \
-            --msgbox "$(printf 'Bilgisayarınızın kapatılacağı saat: %s' "$girilen_saat")" &
+            --msgbox "$(printf 'Bilgisayarınızın kapatılacağı saat: %s %s' "$girilen_saat" "${gun}")" &
       elif (( arayuz == 2 ))
       then
             yad --title="${AD^}" --timeout=10 --window-icon=gnome-shutdown --sticky --center --fixed \
-            --text "$(printf 'Bilgisayarınızın kapatılacağı saat: %s' "$girilen_saat")" &
+            --text "$(printf 'Bilgisayarınızın kapatılacağı saat: %s %s' "$girilen_saat" "${gun}")" &
       elif (( arayuz == 3 ))
       then
           zenity --title="${AD^}" --info --timeout=10 --window-icon=gnome-shutdown \
-            --text "$(printf 'Bilgisayarınızın kapatılacağı saat: %s' "$girilen_saat")" &
+            --text "$(printf 'Bilgisayarınızın kapatılacağı saat: %s %s' "$girilen_saat" "${gun}")" &
       fi
   else
-      printf '%s: bilgisayarınızın kapatılacağı saat: %s\a\n' "${AD}" "$girilen_saat"
+      printf '%s: bilgisayarınızın kapatılacağı saat: %s %s\a\n' "${AD}" "${gun}" "$girilen_saat"
   fi
   sleep $bekle; kapat_penceresi
 }

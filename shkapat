@@ -13,6 +13,8 @@ SIMDI_KAPAT=0
 SAAT=0
 DAKIKA=0
 
+# TODO: Çoklu zamanlama ayarlamayı engelle.
+# TODO: KDE den başka masaüstleri için düzgün kapatma desteği araştır.
 function bilgi() {
   if [[ "$1" = b ]]
   then
@@ -76,24 +78,24 @@ function kapat_penceresi() {
   elif test -x "$(which yad 2>/dev/null)"
   then
       (
-        for ((c=5; c<=100; c+=5))
+        for ((c=5; c<100; c+=5))
         {
            printf '%d\n' "$c"; sleep 1
         }
       ) | yad --progress --percentage=5 --title="${AD^}" \
-            --text "20 saniye sonra bilgisayar kapatılacak" --auto-close \
+            --text "20 saniye sonra bilgisayar kapatılacak." --auto-close \
             --window-icon=gnome-shutdown --sticky --center \
             --button='Şimdi kapat:0' --button='İptal:1'
           (( $? == 1 )) &&  exit 1 || bilg_kapat 2
   elif test -x "$(which zenity 2>/dev/null)"
   then
       (
-        for ((c=5; c<=100; c+=5))
+        for ((c=5; c<100; c+=5))
         {
            printf '%d\n' "$c"; sleep 1
         }
       ) | zenity --progress --percentage=5 --title="${AD^}" \
-            --text "20 saniye sonra bilgisayar kapatılacak" \
+            --text "20 saniye sonra bilgisayar kapatılacak." \
             --window-icon=gnome-shutdown --auto-close
           (( $? == 1 )) &&  exit 1 || bilg_kapat 2
   else

@@ -213,7 +213,7 @@ done
       arayuz=3
       donus=$(zenity --title="${AD^}" --width 400 --height 250 --text='İşlemi seçin:' \
               --window-icon=gnome-shutdown --hide-column=1 --print-column=1 \
-	      --column=' ' --column='Seçenekler' --list \
+              --column=' ' --column='Seçenekler' --list \
               yb 'Şimdi yeniden başlat' \
               kt 'Şimdi kapat' \
               sa 'Girilecek saatte kapat' \

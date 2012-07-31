@@ -12,9 +12,44 @@ YENIDEN_BASLAT=0
 SIMDI_KAPAT=0
 SAAT=0
 DAKIKA=0
+HATA_VER=0
 
-# TODO: Çoklu zamanlama ayarlamayı engelle.
 # TODO: KDE den başka masaüstleri için düzgün kapatma desteği araştır.
+
+function pid_denetle() {
+  local pid ypid=$$
+
+  if [[ -f /tmp/.shkapat.pid && -n $(ps -p $( < /tmp/.shkapat.pid) -o comm=) ]]
+  then
+      HATA_VER=1
+      pid=$( < /tmp/.shkapat.pid)
+  else
+      echo "$ypid" > /tmp/.shkapat.pid
+  fi
+
+  (( HATA_VER )) && {
+    if (( ARAYUZ ))
+    then
+        if (( arayuz == 1 ))
+        then
+            kdialog --title="${AD^}" --icon=system-shutdown \
+            --msgbox "$(printf 'Başka bir zamanlanmış görev mevcut. pid=%s' "${pid}")"
+        elif (( arayuz == 2 ))
+        then
+              yad --title="${AD^}" --timeout=10 --window-icon=gnome-shutdown --sticky --center --fixed \
+                --text "$(printf 'Başka bir zamanlanmış görev mevcut. pid=%s' "${pid}")"
+        elif (( arayuz == 3 ))
+        then
+            zenity --title="${AD^}" --info --timeout=10 --window-icon=gnome-shutdown \
+              --text "$(printf 'Başka bir zamanlanmış görev mevcut. pid=%s' "${pid}")"
+        fi
+    else
+        printf "$(printf '%s: başka bir zamanlanmış görev mevcut. pid=%s' "${AD}" "${pid}")"
+    fi
+    exit 1
+  }
+}
+
 function bilgi() {
   if [[ "$1" = b ]]
   then
@@ -349,6 +384,7 @@ done
 }
 
 (( DAKIKA )) && {
+  pid_denetle
   [[ -n $(tr -d 0-9 <<<$girilen_dakika) ]] && {
     if (( ARAYUZ ))
     then
@@ -401,6 +437,7 @@ done
 }
 
 (( SAAT )) && {
+  pid_denetle
   [[ $girilen_saat != @([0-2][0-9]:[0-5][0-9]) ]] && {
     if (( ARAYUZ ))
     then

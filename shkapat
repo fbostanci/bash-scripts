@@ -44,7 +44,7 @@ function pid_denetle() {
               --text "$(printf 'Başka bir zamanlanmış görev mevcut. pid=%s' "${pid}")"
         fi
     else
-        printf "$(printf '%s: başka bir zamanlanmış görev mevcut. pid=%s' "${AD}" "${pid}")"
+        printf '%s: başka bir zamanlanmış görev mevcut. pid=%s\n' "${AD}" "${pid}"
     fi
     exit 1
   }

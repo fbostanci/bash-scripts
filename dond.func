@@ -34,8 +34,7 @@ function dond() {
   elif [[ "${dizin:-0}" -le ${#dizin_dizisi[@]} ]]
   then
       [[ "${dizin}" -le 0 ]] && { printf "%s: Girilen dizin indisi 1'den küçük olamaz.\n" "${ad}"; return 1; }
-      [[ ${#dizin_dizisi[@]} -gt 0 ]] && cd "${dizin_dizisi[((dizin-1))]}" || \
-        { printf "%s: Eklenmiş dizin bulunmuyor.\n" "${ad}"; return 1; }
+      [[ ${#dizin_dizisi[@]} -gt 0 ]] && cd "${dizin_dizisi[((dizin-1))]}"
   elif [[ "${dizin:-0}" -gt ${#dizin_dizisi[@]} ]]
   then
       printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "${#dizin_dizisi[@]}"

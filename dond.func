@@ -1,11 +1,12 @@
 # Copyright 2012 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.0
+# v1.2
 
 
 function dond() {
-  local dz dizin="$1" d=1 ad=${FUNCNAME[0]}
+  local dizin="$1" ad=${FUNCNAME[0]} dz d
 
+  (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
   [[ "${dizin}" = @(\.|-) ]] && dizin="$(pwd)"
 
   if [[ -d "${dizin}" ]]
@@ -19,24 +20,29 @@ function dond() {
         fi
       done
       dizin_dizisi+=( "${dizin}" )
-      printf "%s: %s eklendi.\nToplam eklenmiş dizin: %d\n" "${ad}" "${dizin}" "${#dizin_dizisi[@]}"
-  elif [[ "${dizin}" = @(listele|-l) ]]
+      printf "%s: %s eklendi.\nToplam eklenmiş dizin: %d\n" "${ad}" "${dizin}" "$((${#dizin_dizisi[@]}-1))"
+  elif [[ "${dizin}" = -@(-listele|l) ]]
   then
-      for dz in ${dizin_dizisi[@]}
-      do
-        printf "%d-> %s\n" "$d" "${dz}"
-        ((d++))
-      done
-  elif [[ "${dizin}" = @(s[iı]f[iı]rla|-s) ]]
+      for ((d=1; d<${#dizin_dizisi[@]}; d++))
+      {
+        printf "%d-> %s\n" "$d" "${dizin_dizisi[$d]}"
+      }
+  elif [[ "${dizin}" = -@(-s[iı]f[iı]rla|s) ]]
   then
-      unset dizin_dizisi && \
-        printf "%s: dizin dizisi sıfırlandı.\n" "${ad}"
-  elif [[ "${dizin:-0}" -le ${#dizin_dizisi[@]} ]]
+      unset dizin_dizisi && printf "%s: dizin dizisi sıfırlandı.\n" "${ad}"
+  elif [[ "${dizin}" = -@(-[oö]nceki|[oö]) ]]
   then
-      [[ "${dizin}" -le 0 ]] && { printf "%s: Girilen dizin indisi 1'den küçük olamaz.\n" "${ad}"; return 1; }
-      [[ ${#dizin_dizisi[@]} -gt 0 ]] && cd "${dizin_dizisi[((dizin-1))]}"
-  elif [[ "${dizin:-0}" -gt ${#dizin_dizisi[@]} ]]
+      [[ -n "${onceki}" ]] && cd "${onceki}" || \
+        printf "%s: Önceki dizin bulunmuyor.\n" "${ad}"
+  elif [[ "${dizin:-0}" -lt ${#dizin_dizisi[@]} ]]
   then
-      printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "${#dizin_dizisi[@]}"
+      [[ "${dizin}" -lt 0 ]] && { printf "%s: Girilen dizin indisi 0'dan küçük olamaz.\n" "${ad}"; return 1; }
+      [[ ${#dizin_dizisi[@]} -gt 0 ]] && {
+        onceki="$(pwd)"
+        cd "${dizin_dizisi[$dizin]}"
+      }
+  elif [[ "${dizin:-0}" -ge ${#dizin_dizisi[@]} ]]
+  then
+      printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "$((${#dizin_dizisi[@]}-1))"
   fi
-} 
+}

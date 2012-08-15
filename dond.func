@@ -6,12 +6,12 @@
 function dond() {
   local dizin="$1" ad=${FUNCNAME[0]} dz d
 
-  (( ! ${#dizin_dizisi[*]} )) && dizin_dizisi+=( "$HOME" )
+  (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
   [[ "${dizin}" = @(\.|-) ]] && dizin="$(pwd)"
 
   if [[ -d "${dizin}" ]]
   then
-      for dz in ${dizin_dizisi[*]}
+      for dz in ${dizin_dizisi[@]}
       do
         if [[ "${dz}" = "${dizin}" ]]
         then
@@ -20,10 +20,10 @@ function dond() {
         fi
       done
       dizin_dizisi+=( "${dizin}" )
-      printf "%s: %s eklendi.\nToplam eklenmiş dizin: %d\n" "${ad}" "${dizin}" "$((${#dizin_dizisi[*]}-1))"
+      printf "%s: %s eklendi.\nToplam eklenmiş dizin: %d\n" "${ad}" "${dizin}" "$((${#dizin_dizisi[@]}-1))"
   elif [[ "${dizin}" = -@(-listele|l) ]]
   then
-      for ((d=1; d<${#dizin_dizisi[*]}; d++))
+      for ((d=1; d<${#dizin_dizisi[@]}; d++))
       {
         printf "%d-> %s\n" "$d" "${dizin_dizisi[$d]}"
       }
@@ -34,15 +34,15 @@ function dond() {
   then
       [[ -n "${onceki}" ]] && cd "${onceki}" || \
         printf "%s: Önceki dizin bulunmuyor.\n" "${ad}"
-  elif [[ "${dizin:-0}" -lt ${#dizin_dizisi[*]} ]]
+  elif [[ "${dizin:-0}" -lt ${#dizin_dizisi[@]} ]]
   then
       [[ "${dizin}" -lt 0 ]] && { printf "%s: Girilen dizin indisi 0'dan küçük olamaz.\n" "${ad}"; return 1; }
-      [[ ${#dizin_dizisi[*]} -gt 0 ]] && {
+      [[ ${#dizin_dizisi[@]} -gt 0 ]] && {
         onceki="$(pwd)"
         cd "${dizin_dizisi[$dizin]}"
       }
-  elif [[ "${dizin:-0}" -ge ${#dizin_dizisi[*]} ]]
+  elif [[ "${dizin:-0}" -ge ${#dizin_dizisi[@]} ]]
   then
-      printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "$((${#dizin_dizisi[*]}-1))"
+      printf "%s: Girilen dizin indisi en fazla %d olabilir.\n" "${ad}" "$((${#dizin_dizisi[@]}-1))"
   fi
 }

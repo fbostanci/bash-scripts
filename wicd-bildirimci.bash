@@ -1,6 +1,13 @@
 #!/bin/bash
 
+# Wicd in betiğe gönderdiği bilgiler:
+# $1: wired ya da wireless bağlanma türü
+# $2: essid: bağlantı noktası adı
+#
+#
 ynt=0
+# Dbus oturum adresi için oturum açmış root olmayan kullanıcının
+# adını kullanıcı değişkenine atadık.
 kullanici="$(who | awk '{print $1}' | sed '/^root$/d' | uniq)"
 
 # notify-send ile iletişim için dbus adresi gerekli olduğundan
@@ -12,8 +19,8 @@ kullanici="$(who | awk '{print $1}' | sed '/^root$/d' | uniq)"
 
 function kayitci() {
   # kayıt tutma kapalı. Eğer bağlanma/kopma bilgilerini
-  # saklamak istiyorsanız /dev/null yerine kayıt dosyasını
-  # konumuyla birlikte girin.
+  # saklamak istiyorsanız /dev/null yerine kayıt dosyasının
+  # adıyla birlikte konumunu girin.
   local kayit_dizini=/dev/null
   local wicd_dizini="${gorev}"
   local durum

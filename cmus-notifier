@@ -9,7 +9,7 @@
 function cikti() {
 #replace some Turkish characters which are not looking properly..  
   _cikti=$(echo "$@" | sed 's:ð:ğ:g;s:Ý:İ:g;s:þ:ş:g;s:ý:ı:g;s:Þ:Ş:g;s:Ð:Ğ:g')
-  notify-send  "cmus-notifier" "${_cikti}" -t 15000 -i ${gorsel}
+  notify-send 'cmus-notifier' "${_cikti}" -t 15000 -i ${gorsel}
 }
 
 while test $# -ge 2
@@ -57,7 +57,7 @@ then
 elif test -n "${_url}"
 then
     cikti "${c_durum} ${_title}\n${_url}"
-    #echo -e "$(date +'%x %X')  ${_title}  ${_url}" >> ~/.cmus-net-tracklist
+    #printf "$(date +'%x %X')  ${_title}  ${_url}\n" >> ~/.cmus-net-tracklist
 else
     cikti "${c_durum}"
 fi

@@ -36,7 +36,7 @@ function dond() {
         printf '%s: Önceki dizin bulunmuyor.\n' "${ad}"
   elif [[ ${dizin:-0} -lt ${#dizin_dizisi[@]} ]]
   then
-      [[ ${dizin} -lt 0 ]] && { printf '%s: Girilen dizin indisi 0'dan küçük olamaz.\n' "${ad}"; return 1; }
+      [[ ${dizin} -lt 0 ]] && { printf "%s: Girilen dizin indisi 0'dan küçük olamaz.\n" "${ad}"; return 1; }
       [[ ${#dizin_dizisi[@]} -gt 0 ]] && {
         onceki="$(pwd)"
         cd "${dizin_dizisi[$dizin]}"

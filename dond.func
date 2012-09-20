@@ -32,7 +32,7 @@ function dond() {
       unset dizin_dizisi && printf '%s: dizin dizisi sıfırlandı.\n' "${ad}"
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then
-      [[ -n ${onceki} ]] && cd "${onceki}" || \
+      [[ -n ${onceki} ]] && cd "${onceki}" ||
         printf '%s: Önceki dizin bulunmuyor.\n' "${ad}"
   elif [[ ${dizin:-0} -lt ${#dizin_dizisi[@]} ]]
   then

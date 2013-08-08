@@ -49,14 +49,14 @@ case $1 in
     paket_de_kurulacak_mı "$@" ;;
   -Su) 
     _sudo_gerekli=1
-    komut="apt-get dist-upgrade"
+    komut="apt-get upgrade"
     calistir; shift
     paket_de_kurulacak_mı "$@" ;; 
   -Syu|-Suy) 
     _sudo_gerekli=1
     komut="apt-get update"
     calistir
-    komut="apt-get dist-upgrade"
+    komut="apt-get upgrade"
     calistir; shift
     paket_de_kurulacak_mı "$@" ;;
   -Ss) 

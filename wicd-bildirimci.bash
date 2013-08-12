@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.0
 
 # Wicd in betiğe gönderdiği bilgiler:
 # $1: wired ya da wireless bağlanma türü
@@ -72,3 +75,5 @@ then
         "$2 ${ileti}" -i network-disconnect -t 10000
     }
 fi
+
+# vim: set ts=2 sw=2 et:

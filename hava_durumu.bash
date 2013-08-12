@@ -1,7 +1,7 @@
 #!/bin/bash
-# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.0.6
+# v1.10
 
 # şehir adı girilirse $1 önemsenmeyecek.
 SEHIR=""
@@ -39,11 +39,13 @@ else
     exit 1
 fi
 
-wget --quiet --timeout=15 --tries=3 -O- "http://www.dmi.gov.tr/tahmin/il-ve-ilceler.aspx?m=${sehir}#sfB" | sed -n \
-  '{
-      /<div id="divSonDurum">/,/<\/div>/ s:<td><em class="renk.*">\(.*\)\&.*:\1 °C:p
+wget --quiet --timeout=15 --tries=3 -O - \
+  "http://www.dmi.gov.tr/tahmin/il-ve-ilceler.aspx?m=${sehir}#sfB" | sed -n \
+  '/<div id="divSonDurum">/,/<\/div>/ { 
+      s:<td><em class="renk.*">\(.*\)\&.*:\1°C:p
+      s:<td.*alt="\(.*\)" /> </td>:\1:p
       s:<td><em>\(.*\)</em></td>:\1:p
-      s:<td><img.*title="\(.*\)" /> <br /><em>\(.*\)</em></td>:\1\n\2:p
+      s:<td.*alt="\(.*\)" /> <br /><em>\(.*\)</em></td>:\1\n\2:p
       s:<td class="sond_zaman">\(.*\)<br .>\(.*\)</td>:\1\n\2:p
    }' > /tmp/hava-sonuclari-$$
 
@@ -54,19 +56,20 @@ do
 done < /tmp/hava-sonuclari-$$
 
 rm -f /tmp/hava-sonuclari-$$ &>/dev/null
-[[ ${degerler[1]} =~ ^Güncel ]] && {
-  degerler[0]='Sayfada bilgiler güncelleniyor...'
-  degerler[1]=
+[[ ${degerler[2]} =~ ^Güncel ]] && {
+  degerler[1]='Güncel Bilgi Bulunamadı!'
+  degerler[2]=""
 }
 
-printf '\n%-20s%b\n%-21s%b\n%-19s%b\n%-21s%b\n%-22s%b\n%-22s%b\n%-25s%b\n%-20s%b\n' \
-  'Şehir' "= ${sehir}" \
-  'Sıcaklık' "= ${degerler[2]}" \
-  'Nem' "= ${degerler[3]}" \
-  'Basınç' "= ${degerler[6]}" \
-  'Rüzgar hızı' "= ${degerler[5]}" \
-  'Rüzgar Yönü' "= ${degerler[4]}" \
-  'Görüş uzaklığı' "= ${degerler[7]}" \
-  'Son güncelleme' "= ${degerler[0]} ${degerler[1]}"
+printf '%-20s%b\n%-19s%b\n%-21s%b\n%-19s%b\n%-21s%b\n%-22s%b\n%-22s%b\n%-25s%b\n%-20s%b\n' \
+  "Şehir" "= ${sehir}" \
+  "Durum" "= ${degerler[0]}" \
+  "Sıcaklık" "= ${degerler[3]}" \
+  "Nem" "= ${degerler[4]}" \
+  "Basınç" "= ${degerler[7]}" \
+  "Rüzgar hızı" "= ${degerler[6]}" \
+  "Rüzgar yönü" "= ${degerler[5]}" \
+  "Görüş uzaklığı" "= ${degerler[8]}" \
+  "Son güncelleme" "= ${degerler[1]} ${degerler[2]}"
 
 # vim: set ts=2 sw=2 et:

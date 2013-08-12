@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.0
 
 # bu betiğin bulunduğu wicd dizinini görev değişkenine ata.
 export gorev="$(echo $0 | awk -F'/' '{print($(NF-1))}')"

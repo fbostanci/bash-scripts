@@ -1,7 +1,7 @@
 #!/bin/bash
-# Copyright 2011-2012 Fatih Bostancı <faopera@gmail.com>
-#GPLv3
-#v1.0.1
+# Copyright (c) 2011-2013 Fatih Bostancı <faopera@gmail.com>
+# GPLv3
+# v1.0.1
 
 # TODO: Gelişmiş yollarla yeniden yazılacak.
 

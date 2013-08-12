@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.0.4
 
@@ -14,3 +14,5 @@ do
   sqlite3 $veritabani reindex
   printf "S:$(du -h $veritabani | awk '{printf "%5s%s", $1,"B]"}')\n"
 done
+
+# vim: set ts=2 sw=2 et:

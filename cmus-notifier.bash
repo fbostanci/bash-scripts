@@ -1,8 +1,9 @@
 #!/bin/bash
 # based on cmus-status-display
-# Copyright 2012 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.0.2
+
 # Dependencies: cmus,bash,sed,libnotify
 # Usage: in cmus command ":set status_display_program=where-is-this-script"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright 2013 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.0
+# v1.0.3
 
 _sudo_gerekli=0
 _paket_gerekli=0
@@ -77,6 +77,11 @@ case $1 in
     komut="dpkg-query -s"
     shift; paket="$@"
     calistir ;;
+  -Sw)
+    _paket_gerekli=1
+    komut="apt-get dowload"
+    shift; paket="$@"
+    calistir ;;
   -R|-Rn)
     _sudo_gerekli=1
     _paket_gerekli=1
@@ -104,6 +109,10 @@ case $1 in
     _paket_gerekli=1
     komut="dpkg -i"
     shift; paket="$@" 
+    calistir
+    _paket_gerekli=0
+    paket=""
+    komut="apt-get install -f"
     calistir ;;
   -Qi) 
     _paket_gerekli=1

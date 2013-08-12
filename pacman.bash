@@ -15,7 +15,7 @@ function calistir() {
   (( _paket_gerekli )) && [[ -z ${paket} ]] &&
   { printf \
       "HATA: Çalıştırılacak \`%s' komutunun çalışması için bir paket adı girmelisiniz. Çıkılıyor...\n" \
-      "${komut}"; exit 1
+      "${bu_komutu_calistir}"; exit 1
   } || bu_komutu_calistir+=" ${paket}"
   
   ! (( $(id -u) )) && ! (( _sudo_gerekli )) &&

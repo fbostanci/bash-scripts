@@ -1,7 +1,7 @@
 #!/bin/bash
-# Copyright (c) 2012-2013 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2014 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.10
+# v1.11
 
 # şehir adı girilirse $1 önemsenmeyecek.
 SEHIR=""
@@ -41,12 +41,12 @@ fi
 
 wget --quiet --timeout=15 --tries=3 -O - \
   "http://www.dmi.gov.tr/tahmin/il-ve-ilceler.aspx?m=${sehir}#sfB" | sed -n \
-  '/<div id="divSonDurum">/,/<\/div>/ { 
+  '/<div id="divSonDurum">/,/<\/div>/ {
+      s:<td title = "\(.*\)" row.*>:\1:p
+      s:<td.*class="son.*">\(.*\)<br .>\(.*\)</td>:\1\n\2:p
       s:<td><em class="renk.*">\(.*\)\&.*:\1°C:p
-      s:<td.*alt="\(.*\)" /> </td>:\1:p
       s:<td><em>\(.*\)</em></td>:\1:p
       s:<td.*alt="\(.*\)" /> <br /><em>\(.*\)</em></td>:\1\n\2:p
-      s:<td class="sond_zaman">\(.*\)<br .>\(.*\)</td>:\1\n\2:p
    }' > /tmp/hava-sonuclari-$$
 
 set -e

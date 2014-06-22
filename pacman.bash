@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2013 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2013-2014 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.0.3
 

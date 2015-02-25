@@ -1,10 +1,10 @@
 #!/bin/bash
-# Copyright (c) 2012-2014 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2015 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.11
 
 # şehir adı girilirse $1 önemsenmeyecek.
-SEHIR=""
+SEHIR=''
 
 degerler=()
 sehirler=( ADANA ADIYAMAN AFYONKARAHISAR AGRI AMASYA ANKARA ANTALYA ARTVIN AYDIN
@@ -58,18 +58,18 @@ done < /tmp/hava-sonuclari-$$
 rm -f /tmp/hava-sonuclari-$$ &>/dev/null
 [[ ${degerler[2]} =~ ^Güncel ]] && {
   degerler[1]='Güncel Bilgi Bulunamadı!'
-  degerler[2]=""
+  degerler[2]=''
 }
 
 printf '%-20s%b\n%-19s%b\n%-21s%b\n%-19s%b\n%-21s%b\n%-22s%b\n%-22s%b\n%-25s%b\n%-20s%b\n' \
-  "Şehir" "= ${sehir}" \
-  "Durum" "= ${degerler[0]}" \
-  "Sıcaklık" "= ${degerler[3]}" \
-  "Nem" "= ${degerler[4]}" \
-  "Basınç" "= ${degerler[7]}" \
-  "Rüzgar hızı" "= ${degerler[6]}" \
-  "Rüzgar yönü" "= ${degerler[5]}" \
-  "Görüş uzaklığı" "= ${degerler[8]}" \
-  "Son güncelleme" "= ${degerler[1]} ${degerler[2]}"
+  'Şehir' "= ${sehir}" \
+  'Durum' "= ${degerler[0]}" \
+  'Sıcaklık' "= ${degerler[3]}" \
+  'Nem' "= ${degerler[4]}" \
+  'Basınç' "= ${degerler[7]}" \
+  'Rüzgar hızı' "= ${degerler[6]}" \
+  'Rüzgar yönü' "= ${degerler[5]}" \
+  'Görüş uzaklığı' "= ${degerler[8]}" \
+  'Son güncelleme' "= ${degerler[1]} ${degerler[2]}"
 
 # vim: set ts=2 sw=2 et:

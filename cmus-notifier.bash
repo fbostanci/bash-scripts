@@ -1,6 +1,6 @@
 #!/bin/bash
 # based on cmus-status-display
-# Copyright (c) 2012-2014 Fatih Bostancı <faopera@gmail.com>
+# Copyright (c) 2012-2015 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.0.2
 

@@ -40,7 +40,7 @@ else
 fi
 
 wget --quiet --timeout=15 --tries=3 -O - \
-  "http://www.dmi.gov.tr/tahmin/il-ve-ilceler.aspx?m=${sehir}#sfB" | sed -n \
+  "https://mgm.gov.tr/?il=${sehir}" | sed -n \
   '/<div id="divSonDurum">/,/<\/div>/ {
       s:<td title = "\(.*\)" row.*>:\1:p
       s:<td.*class="son.*">\(.*\)<br .>\(.*\)</td>:\1\n\2:p

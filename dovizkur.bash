@@ -1,8 +1,9 @@
 #!/bin/bash
-#
-#
-#
-#
+#Copyright (c) 2017 Fatih Bostancı <faopera@gmail.com>
+# v0.2
+# GPLv3
+# Türkiye Cumhuriyet Merkez Bankası(TCMB) döviz kurlarını
+# gösterici betik
 
 if ! type -p wget &>/dev/null
 then
@@ -14,6 +15,28 @@ then
     exit 1
 fi
 
+# öntanımlı renkli gösterim açık (1)
+# kapatmak için RENK_KULLAN daki 1'i 0 yapın.
+# öntanımlı ayar kalsın anlık renk durumu değişsin için
+# RENK=0: renkler kapalı
+# RENK=1: renkler açık (öntanımlı kapalı ise)
+# örnek: öntanımlı renkler açık, anlık kapatma için
+# export RENK=0; bash dovizkur.bash
+RENK_KULLAN=${RENK:-1}
+
+(( RENK_KULLAN )) && {
+  R0='\033[0m' # Renk yok
+  R1='\033[0;1m' # Renk beyaz
+  R2='\033[1;33m' # Renk sari
+  R3='\033[1;32m' # Renk yeşil
+  R4='\033[1;36m' # Renk mavi
+} || {
+  R0=''
+  R1=''
+  R2=''
+  R3=''
+  R4=''
+}
 
 wget -t 1 --quiet http://www.tcmb.gov.tr/kurlar/today.xml -O /tmp/doviz-kurlari
 
@@ -29,12 +52,6 @@ birimler=( 'Birim' "${birimler[@]}" )
 doviz_adi=( 'Döviz Adı' "${doviz_adi[@]}" )
 alis_fiyati=( 'Alış' "${alis_fiyati[@]}" )
 satis_fiyati=( 'Satış' "${satis_fiyati[@]}" )
-
-R0='\033[0m' # Renk yok
-R1='\033[0;1m' # Renk beyaz
-R2='\033[1;33m' # Renk sari
-R3='\033[1;32m' # Renk yeşil
-R4='\033[1;36m' # Renk mavi
 
 case $1 in
   --dolar)

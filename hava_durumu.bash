@@ -2,7 +2,7 @@
 # Copyright (c) 2012-2015 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
 # v1.11
-
+echo güncel değil; exit 1
 # şehir adı girilirse $1 önemsenmeyecek.
 SEHIR=''
 

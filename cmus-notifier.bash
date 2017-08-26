@@ -29,7 +29,7 @@ done
         gorsel=media-playback-pause
     elif [[ ${_status} = stopped ]]
     then
-        c_durum='>o<'
+        c_durum='&#62;o&#60;'
         gorsel=media-playback-stop
     fi
 

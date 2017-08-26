@@ -5,5 +5,5 @@
 
     for ((n=1; n<=$k; n++))
     do
-        shuf -i 1-49 -n 6 | sort -n | xargs echo
+        shuf -i 1-49 -n 6 | sort -n
     done 

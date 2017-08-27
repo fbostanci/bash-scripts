@@ -6,7 +6,9 @@
 dond() {
   local dizin="$1" ad=${FUNCNAME[0]} dz d
 
-  (( ${#DOND_DIZINLERI[@]} ))  && {
+  (( ! ${#DOND_DIZINLERI[@]} )) && [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
+
+  (( ${#DOND_DIZINLERI[@]} )) && {
     declare -n dizin_dizisi=DOND_DIZINLERI
     if ! [[ " ${dizin_dizisi[*]} " == *" $HOME "* ]]
     then
@@ -41,7 +43,7 @@ dond() {
   then
       for dz in ${dizin_dizisi[@]}
       do
-        if [[ ${dz} = ${dizin} ]]
+        if [[ ${dz} = $(realpath "${dizin}") ]]
         then
             printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin}"
             return 1
@@ -60,6 +62,7 @@ dond() {
   elif [[ ${dizin} = -@(-s[iı]f[iı]rla|s) ]]
   then
       unset dizin_dizisi && printf '%s: dizin dizisi sıfırlandı.\n' "${ad}"
+      [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
 
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then

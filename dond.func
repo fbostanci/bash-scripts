@@ -6,7 +6,8 @@
 dond() {
   local dizin="$1" ad=${FUNCNAME[0]} dz d
 
-  (( ! ${#DOND_DIZINLERI[@]} )) && [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
+  (( ! ${#DOND_DIZINLERI[@]} )) && \
+  [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
 
   (( ${#DOND_DIZINLERI[@]} )) && {
     declare -n dizin_dizisi=DOND_DIZINLERI
@@ -52,7 +53,7 @@ dond() {
       do
         if [[ ${dz} = $(realpath "${dizin}") ]]
         then
-            printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin}"
+            printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin%/}"
             return 1
         fi
       done
@@ -60,7 +61,7 @@ dond() {
 
       dizin_dizisi+=( "$(realpath "${dizin}")" )
       printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
-        "${ad}" "${dizin}" "$(( ${#dizin_dizisi[@]} - 1 ))"
+        "${ad}" "${dizin%/}" "$(( ${#dizin_dizisi[@]} - 1 ))"
 
   elif [[ ${dizin} = -@(-listele|l) ]]
   then
@@ -79,6 +80,16 @@ dond() {
       [[ -n ${onceki} ]] && cd "${onceki}" ||
         printf '%s: Önceki dizin bulunmuyor.\n' "${ad}"
 
+  elif [[ ${dizin} = -@(-yaz|y) ]]
+  then
+cat <<DOND > "$HOME/.dondrc"
+DOND_DIZINLERI=(
+$(printf "'%s'\n" "${dizin_dizisi[@]}")
+)
+DOND
+  printf '%s: %s dosyasına dizin dizisi yazıldı.\n' \
+    "${ad}" "$HOME/.dondrc"
+
   # fonksiyon değişken verilmeden çalıştırılıyorsa
   # varsayılan dizine git.
   elif [[ ! ${dizin} ]]
@@ -86,7 +97,7 @@ dond() {
       cd "${dizin_dizisi[0]}"
 
   else
-      printf '%s: Geçersiz dizin adı\n' "${ad}"
+      printf '%s: Geçersiz dizin adı/değişken\n' "${ad}"
 
   fi
 }

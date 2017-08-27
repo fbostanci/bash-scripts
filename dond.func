@@ -47,7 +47,7 @@ dond() {
             return 1
         fi
       done
-      dizin_dizisi+=( "${dizin}" )
+      dizin_dizisi+=( "$(realpath "${dizin}")" )
       printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' "${ad}" "${dizin}" "$(( ${#dizin_dizisi[@]} - 1 ))"
 
   elif [[ ${dizin} = -@(-listele|l) ]]

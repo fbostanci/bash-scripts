@@ -10,7 +10,7 @@ dond() {
 
   (( ${#DOND_DIZINLERI[@]} )) && {
     declare -n dizin_dizisi=DOND_DIZINLERI
-    if ! [[ " ${dizin_dizisi[*]} " == *" $HOME "* ]]
+    if [[ ! " ${dizin_dizisi[@]} " =~ " $HOME " ]]
     then
         dizin_dizisi=( "$HOME" "${dizin_dizisi[@]}" )
     fi
@@ -26,7 +26,10 @@ dond() {
       if (( dizin < ${#dizin_dizisi[@]} ))
       then
           # $dizin negatif ise
-          (( dizin < 0 )) && { printf "%s: Girilen dizin indisi 0'dan küçük olamaz.\n" "${ad}"; return 1; }
+          (( dizin < 0 )) && {
+            printf "%s: Girilen dizin indisi 0'dan küçük olamaz.\n" "${ad}"
+            return 1
+          }
           # dizin_dizisi elemana sahipse dizin değiştir.
           (( ${#dizin_dizisi[@]} )) && {
             onceki="$(pwd)"
@@ -35,13 +38,17 @@ dond() {
 
       elif (( dizin >= ${#dizin_dizisi[@]} ))
       then
-          printf '%s: Girilen dizin indisi en fazla %d olabilir.\n' "${ad}" "$(( ${#dizin_dizisi[@]} - 1 ))"
+          printf '%s: Girilen dizin indisi en fazla %d olabilir.\n' \
+            "${ad}" "$(( ${#dizin_dizisi[@]} - 1 ))"
       fi
 
   # $dizin bir dizinse
   elif [[ -d ${dizin} ]]
   then
-      for dz in ${dizin_dizisi[@]}
+      ESKI_IFS=$IFS
+      IFS=$'\n'
+
+      for dz in ${dizin_dizisi[*]}
       do
         if [[ ${dz} = $(realpath "${dizin}") ]]
         then
@@ -49,8 +56,11 @@ dond() {
             return 1
         fi
       done
+      IFS=$ESKI_IFS
+
       dizin_dizisi+=( "$(realpath "${dizin}")" )
-      printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' "${ad}" "${dizin}" "$(( ${#dizin_dizisi[@]} - 1 ))"
+      printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
+        "${ad}" "${dizin}" "$(( ${#dizin_dizisi[@]} - 1 ))"
 
   elif [[ ${dizin} = -@(-listele|l) ]]
   then

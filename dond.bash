@@ -90,6 +90,27 @@ DOND
   printf '%s: %s dosyasına dizin dizisi yazıldı.\n' \
     "${ad}" "$HOME/.dondrc"
 
+  elif [[ ${dizin} = -@(-yard[ıi]m|-help|h) ]]
+  then
+      echo "
+        kullanım: ${ad} [.|-]  [dizin|seçenek|dizin_no]
+
+        -l, --listele
+          Eklenmiş dizinleri numaralarıyla sıralar.
+
+        -s, --sifirla
+          dizin listesini varsayılana dönüştürür.
+
+        -o, --onceki
+          bir önceki konuma geri döner.
+
+        -y, --yaz
+          geçerli dizin listesini dosyaya yazar.
+
+        -h, --help, --yardım
+          bu yardım çıktısını görüntüler.
+           " >&2
+
   # fonksiyon değişken verilmeden çalıştırılıyorsa
   # varsayılan dizine git.
   elif [[ ! ${dizin} ]]

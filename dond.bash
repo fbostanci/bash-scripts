@@ -5,9 +5,10 @@
 
 dond() {
   local dizin="$1" ad=${FUNCNAME[0]} dz d
+  local DONDRC="$HOME/.dondrc"
 
   (( ! ${#DOND_DIZINLERI[@]} )) && \
-  [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
+  [[ -r ${DONDRC} ]] && source "${DONDRC}"
 
   (( ${#DOND_DIZINLERI[@]} )) && {
     declare -n dizin_dizisi=DOND_DIZINLERI
@@ -73,22 +74,40 @@ dond() {
   elif [[ ${dizin} = -@(-s[iı]f[iı]rla|s) ]]
   then
       unset dizin_dizisi && printf '%s: dizin dizisi sıfırlandı.\n' "${ad}"
-      [[ -r $HOME/.dondrc ]] && source "$HOME/.dondrc"
+      [[ -r ${DONDRC} ]] && source "${DONDRC}"
 
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then
       [[ -n ${onceki} ]] && cd "${onceki}" ||
         printf '%s: Önceki dizin bulunmuyor.\n' "${ad}"
 
+  elif [[ ${dizin} = -@(-sil|-remove|r) ]]
+  then
+      if [[ -n $2 && $2 =~ ^[0-9]+([.][0-9]+)?$ ]]
+      then
+          if [[ -n ${dizin_dizisi[$2]} ]]
+          then
+              unset "dizin_dizisi[$2]"
+              printf '%s: dizin elemanı silindi.\n' "${ad}"
+              dizin_dizisi=("${dizin_dizisi[@]}")
+          else
+              printf '%s: dizinin %s. elemanı bulunmuyor.\n1 <= dizin_elemanı <= %d\n' \
+                "${ad}" "$2" "$(( ${#dizin_dizisi[@]} - 1 ))"
+          fi
+      else
+          printf '%s: hatalı dizin silme isteği: %s\n' \
+            "${ad}" "${2:-null}"
+      fi
+
   elif [[ ${dizin} = -@(-yaz|y) ]]
   then
-cat <<DOND > "$HOME/.dondrc"
+cat <<DOND > "${DONDRC}"
 DOND_DIZINLERI=(
 $(printf "'%s'\n" "${dizin_dizisi[@]}")
 )
 DOND
   printf '%s: %s dosyasına dizin dizisi yazıldı.\n' \
-    "${ad}" "$HOME/.dondrc"
+    "${ad}" "${DONDRC}"
 
   elif [[ ${dizin} = -@(-yard[ıi]m|-help|h) ]]
   then
@@ -101,13 +120,16 @@ DOND
         -s, --sifirla
           dizin listesini varsayılana dönüştürür.
 
+        -r, --remove, --sil <dizin_no>
+          dizin listesinden girilen dizini siler.
+
         -o, --onceki
           bir önceki konuma geri döner.
 
         -y, --yaz
           geçerli dizin listesini dosyaya yazar.
 
-        -h, --help, --yardım
+        -h, --help, --yardim
           bu yardım çıktısını görüntüler.
            " >&2
 

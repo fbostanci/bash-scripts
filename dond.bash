@@ -1,9 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3
+# v1.3.4
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
+  local surum='1.3.4'
   local dizin="$1" ad=${FUNCNAME[0]} dz d
   local DONDRC="$HOME/.dondrc"
 
@@ -76,7 +77,7 @@ dond() {
 
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then
-      cd - >/dev/null ||
+      cd - > /dev/null 2>&1 || \
         printf '%s: önceki dizin bulunmuyor.\n' "${ad}"
 
   elif [[ ${dizin} = -@(-sil|-remove|r) ]]
@@ -100,7 +101,7 @@ dond() {
   elif [[ ${dizin} = -@(-yaz|y) ]]
   then
 cat <<DOND > "${DONDRC}"
-# ${ad} yapılandırma dosyası
+# ${ad} v${surum} yapılandırma dosyası
 
 DOND_DIZINLERI=(
 $(printf "'%s'\n" "${dizin_dizisi[@]}")
@@ -112,7 +113,11 @@ DOND
   elif [[ ${dizin} = -@(-yard[ıi]m|-help|h) ]]
   then
       echo "
-        kullanım: ${ad} [.|-]  [dizin|seçenek|dizin_no]
+        ${ad} ${surum}
+
+        kullanım:
+        ${ad} [.|-]
+        ${ad} [dizin|seçenek|dizin_no]
 
         Seçenekler:
         -l, --listele

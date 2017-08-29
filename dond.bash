@@ -33,11 +33,9 @@ dond() {
             return 1
           }
           # dizin_dizisi elemana sahipse dizin değiştir.
-          (( ${#dizin_dizisi[@]} )) && {
-            onceki="$(pwd)"
-            cd "${dizin_dizisi[$dizin]}"
-          }
+          (( ${#dizin_dizisi[@]} )) && cd "${dizin_dizisi[$dizin]}"
 
+      # $dizin, dizin_dizisi eleman sayısından büyükse
       elif (( dizin >= ${#dizin_dizisi[@]} ))
       then
           printf '%s: Girilen dizin indisi en fazla %d olabilir.\n' \
@@ -78,8 +76,8 @@ dond() {
 
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then
-      [[ -n ${onceki} ]] && cd "${onceki}" ||
-        printf '%s: Önceki dizin bulunmuyor.\n' "${ad}"
+      cd - >/dev/null ||
+        printf '%s: önceki dizin bulunmuyor.\n' "${ad}"
 
   elif [[ ${dizin} = -@(-sil|-remove|r) ]]
   then
@@ -91,7 +89,7 @@ dond() {
               printf '%s: dizin elemanı silindi.\n' "${ad}"
               dizin_dizisi=("${dizin_dizisi[@]}")
           else
-              printf '%s: dizinin %s. elemanı bulunmuyor.\n1 <= dizin_elemanı <= %d\n' \
+              printf '%s: dizinin %s. elemanı bulunmuyor.\n1<=dizin_elemanı<=%d\n' \
                 "${ad}" "$2" "$(( ${#dizin_dizisi[@]} - 1 ))"
           fi
       else
@@ -102,6 +100,8 @@ dond() {
   elif [[ ${dizin} = -@(-yaz|y) ]]
   then
 cat <<DOND > "${DONDRC}"
+# ${ad} yapılandırma dosyası
+
 DOND_DIZINLERI=(
 $(printf "'%s'\n" "${dizin_dizisi[@]}")
 )
@@ -114,8 +114,9 @@ DOND
       echo "
         kullanım: ${ad} [.|-]  [dizin|seçenek|dizin_no]
 
+        Seçenekler:
         -l, --listele
-          Eklenmiş dizinleri numaralarıyla sıralar.
+          eklenmiş dizinleri numaralarıyla sıralar.
 
         -s, --sifirla
           dizin listesini varsayılana dönüştürür.

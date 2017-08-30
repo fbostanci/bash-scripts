@@ -5,7 +5,7 @@
 
 dond() {
   local surum='1.3.5'
-  local dizin="$1" ad=${FUNCNAME[0]} dz d s
+  local dizin="$1" ad=${FUNCNAME[0]} dz d
   local DONDRC="$HOME/.dondrc"
 
   (( ! ${#DOND_DIZINLERI[@]} )) && \
@@ -22,10 +22,11 @@ dond() {
   (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
   [[ ${dizin} = @(.|-) ]] && dizin="$(pwd)"
 
-  # $dizin bir sayı ise
-  if [[ ${dizin} =~ ^-?[0-9]+([.][0-9]+)?$  ]]
+  # $dizin tam sayı ise
+  if [[ ${dizin} =~ ^-?[0-9]+([.|,][0-9]+)?$  ]]
   then
       dizin=${dizin%.*}
+      dizin=${dizin%,*}
       # $dizin, dizin_dizisi eleman sayısından küçükse
       if (( dizin < ${#dizin_dizisi[@]} ))
       then
@@ -83,10 +84,11 @@ dond() {
 
   elif [[ ${dizin} = -@(-sil|-remove|r) ]]
   then
-      if [[ -n $2 && $2 =~ ^[0-9]+([.][0-9]+)?$ ]]
+      if [[ -n $2 && $2 =~ ^[0-9]+([.|,][0-9]+)?$ ]]
       then
           s="$2"
           s=${s%.*}
+          s=${s%,*}
           if [[ -n ${dizin_dizisi[$s]} ]]
           then
               unset "dizin_dizisi[$s]"
@@ -98,7 +100,7 @@ dond() {
           fi
       else
           printf '%s: hatalı dizin silme isteği: %s\n' \
-            "${ad}" "${s:-null}"
+            "${ad}" "${2:-null}"
       fi
 
   elif [[ ${dizin} = -@(-yaz|y) ]]

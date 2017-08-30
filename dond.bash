@@ -1,11 +1,11 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.4
+# v1.3.5
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.4'
-  local dizin="$1" ad=${FUNCNAME[0]} dz d
+  local surum='1.3.5'
+  local dizin="$1" ad=${FUNCNAME[0]} dz d s
   local DONDRC="$HOME/.dondrc"
 
   (( ! ${#DOND_DIZINLERI[@]} )) && \
@@ -22,9 +22,10 @@ dond() {
   (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
   [[ ${dizin} = @(.|-) ]] && dizin="$(pwd)"
 
-  # $dizin tam sayı ise
+  # $dizin bir sayı ise
   if [[ ${dizin} =~ ^-?[0-9]+([.][0-9]+)?$  ]]
   then
+      dizin=${dizin%.*}
       # $dizin, dizin_dizisi eleman sayısından küçükse
       if (( dizin < ${#dizin_dizisi[@]} ))
       then
@@ -84,18 +85,20 @@ dond() {
   then
       if [[ -n $2 && $2 =~ ^[0-9]+([.][0-9]+)?$ ]]
       then
-          if [[ -n ${dizin_dizisi[$2]} ]]
+          s="$2"
+          s=${s%.*}
+          if [[ -n ${dizin_dizisi[$s]} ]]
           then
-              unset "dizin_dizisi[$2]"
+              unset "dizin_dizisi[$s]"
               printf '%s: dizin elemanı silindi.\n' "${ad}"
               dizin_dizisi=("${dizin_dizisi[@]}")
           else
               printf '%s: dizinin %s. elemanı bulunmuyor.\n1<=dizin_elemanı<=%d\n' \
-                "${ad}" "$2" "$(( ${#dizin_dizisi[@]} - 1 ))"
+                "${ad}" "$s" "$(( ${#dizin_dizisi[@]} - 1 ))"
           fi
       else
           printf '%s: hatalı dizin silme isteği: %s\n' \
-            "${ad}" "${2:-null}"
+            "${ad}" "${s:-null}"
       fi
 
   elif [[ ${dizin} = -@(-yaz|y) ]]

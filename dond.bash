@@ -1,10 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.6
+# v1.3.7
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.6'
+  local surum='1.3.7'
   local dizin="$1" ad=${FUNCNAME[0]} dz d
   local DONDRC="$HOME/.dondrc"
 
@@ -77,7 +77,7 @@ dond() {
   then
       for ((d=1; d<${#dizin_dizisi[@]}; d++))
       do
-        printf '%d-> %s\n' "$d" "${dizin_dizisi[$d]}"
+        printf '%2d-> %s\n' "$d" "${dizin_dizisi[$d]}"
       done
 
   elif [[ ${dizin} = -@(-s[iı]f[iı]rla|s) ]]
@@ -100,10 +100,10 @@ dond() {
           if [[ -n ${dizin_dizisi[$s]} ]]
           then
               unset "dizin_dizisi[$s]"
-              printf '%s: dizin elemanı silindi.\n' "${ad}"
+              printf '%s: %d. dizin elemanı silindi.\n' "${ad}" "${s}"
               dizin_dizisi=("${dizin_dizisi[@]}")
           else
-              printf '%s: dizinin %s. elemanı bulunmuyor.\n1<=dizin_elemanı<=%d\n' \
+              printf '%s: dizinin %d. elemanı bulunmuyor.\n1<=dizin_elemanı<=%d\n' \
                 "${ad}" "$s" "$(( ${#dizin_dizisi[@]} - 1 ))"
           fi
       else

@@ -1,10 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.5
+# v1.3.6
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.5'
+  local surum='1.3.6'
   local dizin="$1" ad=${FUNCNAME[0]} dz d
   local DONDRC="$HOME/.dondrc"
 
@@ -22,10 +22,12 @@ dond() {
   (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
   [[ ${dizin} = @(.|-) ]] && dizin="$(pwd)"
 
-  # $dizin tam sayı ise
+  # $dizin bir sayı ise
   if [[ ${dizin} =~ ^-?[0-9]+([.|,][0-9]+)?$  ]]
   then
+      # $dizin noktalı sayıysa tam kısmı al.
       dizin=${dizin%.*}
+      # $dizin virgüllü sayıysa tam kısmı al.
       dizin=${dizin%,*}
       # $dizin, dizin_dizisi eleman sayısından küçükse
       if (( dizin < ${#dizin_dizisi[@]} ))
@@ -36,7 +38,13 @@ dond() {
             return 1
           }
           # dizin_dizisi elemana sahipse dizin değiştir.
-          (( ${#dizin_dizisi[@]} )) && cd "${dizin_dizisi[$dizin]}"
+          (( ${#dizin_dizisi[@]} )) && {
+            #  geçilecek dizinle şu anki dizin aynıysa cd çalışmasın.
+            # OLDPWD değeri şu anki dizinle değiştiği için
+            # --önceki ile önceki bulunulan dizine geçmiyor.
+            [[ $(pwd) = ${dizin_dizisi[$dizin]} ]] && return 0
+            cd "${dizin_dizisi[$dizin]}"
+          }
 
       # $dizin, dizin_dizisi eleman sayısından büyükse
       elif (( dizin >= ${#dizin_dizisi[@]} ))
@@ -117,31 +125,31 @@ DOND
 
   elif [[ ${dizin} = -@(-yard[ıi]m|-help|h) ]]
   then
-      echo "
-        ${ad} ${surum}
+      echo "\
+  ${ad} - v${surum}
 
-        kullanım:
-        ${ad} [.|-]
-        ${ad} [dizin|seçenek|dizin_no]
+  Kullanım:
+      ${ad} [.|-]
+      ${ad} [dizin|seçenek|dizin_no]
 
-        Seçenekler:
-        -l, --listele
-          eklenmiş dizinleri numaralarıyla sıralar.
+  Seçenekler:
+      -l, --listele
+        eklenmiş dizinleri numaralarıyla sıralar.
 
-        -s, --sifirla
-          dizin listesini varsayılana dönüştürür.
+      -s, --sifirla
+        dizin listesini varsayılana dönüştürür.
 
-        -r, --remove, --sil <dizin_no>
-          dizin listesinden girilen dizini siler.
+      -r, --remove, --sil <dizin_no>
+        dizin listesinden girilen dizini siler.
 
-        -o, --onceki
-          bir önceki konuma geri döner.
+      -o, --onceki
+        bir önceki konuma geri döner.
 
-        -y, --yaz
-          geçerli dizin listesini dosyaya yazar.
+      -y, --yaz
+        geçerli dizin listesini dosyaya yazar.
 
-        -h, --help, --yardim
-          bu yardım çıktısını görüntüler.
+      -h, --help, --yardim
+        bu yardım çıktısını görüntüler.
            " >&2
 
   # fonksiyon değişken verilmeden çalıştırılıyorsa

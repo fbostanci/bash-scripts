@@ -5,21 +5,27 @@
 
 dond() {
   local surum='1.3.7'
-  local dizin="$1" ad=${FUNCNAME[0]} dz d
+  local dizin="$1" ad=${FUNCNAME[0]} dz d s
   local DONDRC="$HOME/.dondrc"
 
   (( ! ${#DOND_DIZINLERI[@]} )) && \
   [[ -r ${DONDRC} ]] && source "${DONDRC}"
 
+  # DOND_DIZINLERI elemana sahipse
+  # liste içeriğini dizin_dizisi'ne
+  # aktar.
   (( ${#DOND_DIZINLERI[@]} )) && {
     declare -n dizin_dizisi=DOND_DIZINLERI
+    # $HOME, dizin_dizisi'nde yoksa varsayılan (0)
+    # olarak ekle.
     if [[ ! " ${dizin_dizisi[@]} " =~ " $HOME " ]]
     then
         dizin_dizisi=( "$HOME" "${dizin_dizisi[@]}" )
     fi
   }
-
-  (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi+=( "$HOME" )
+  # dizin_dizisi tanımlı değil ise $HOME ekleyerek
+  # dizin_dizisi'ni tanımla.
+  (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi=( "$HOME" )
   [[ ${dizin} = @(.|-) ]] && dizin="$(pwd)"
 
   # $dizin bir sayı ise
@@ -39,7 +45,7 @@ dond() {
           }
           # dizin_dizisi elemana sahipse dizin değiştir.
           (( ${#dizin_dizisi[@]} )) && {
-            #  geçilecek dizinle şu anki dizin aynıysa cd çalışmasın.
+            # geçilecek dizinle şu anki dizin aynıysa cd çalışmasın.
             # OLDPWD değeri şu anki dizinle değiştiği için
             # --önceki ile önceki bulunulan dizine geçmiyor.
             [[ $(pwd) = ${dizin_dizisi[$dizin]} ]] && return 0
@@ -102,10 +108,12 @@ dond() {
               unset "dizin_dizisi[$s]"
               printf '%s: %d. dizin elemanı silindi.\n' "${ad}" "${s}"
               dizin_dizisi=("${dizin_dizisi[@]}")
+
           else
               printf '%s: dizinin %d. elemanı bulunmuyor.\n1<=dizin_elemanı<=%d\n' \
                 "${ad}" "$s" "$(( ${#dizin_dizisi[@]} - 1 ))"
           fi
+
       else
           printf '%s: hatalı dizin silme isteği: %s\n' \
             "${ad}" "${2:-null}"

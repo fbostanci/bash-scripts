@@ -1,10 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.8
+# v1.3.9
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.8'
+  local surum='1.3.9'
   local dizin="$1" ad=${FUNCNAME[0]} dz d s
   local DONDRC="$HOME/.dondrc"
 
@@ -36,7 +36,7 @@ dond() {
 
       for dz in ${dizin_dizisi[*]}
       do
-        if [[ ${dz} = $(realpath "${dizin}") ]]
+        if [[ ${dz} = $(realpath -- "${dizin}") ]]
         then
             printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin%/}"
             return 1
@@ -44,7 +44,7 @@ dond() {
       done
       IFS=$ESKI_IFS
 
-      dizin_dizisi+=( "$(realpath "${dizin}")" )
+      dizin_dizisi+=( "$(realpath -- "${dizin}")" )
       printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
         "${ad}" "${dizin%/}" "$(( ${#dizin_dizisi[@]} - 1 ))"
 

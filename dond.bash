@@ -1,10 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.7
+# v1.3.8
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.7'
+  local surum='1.3.8'
   local dizin="$1" ad=${FUNCNAME[0]} dz d s
   local DONDRC="$HOME/.dondrc"
 
@@ -28,8 +28,28 @@ dond() {
   (( ! ${#dizin_dizisi[@]} )) && dizin_dizisi=( "$HOME" )
   [[ ${dizin} = @(.|-) ]] && dizin="$(pwd)"
 
+  # $dizin bir dizinse
+  if [[ -d ${dizin} ]]
+  then
+      ESKI_IFS=$IFS
+      IFS=$'\n'
+
+      for dz in ${dizin_dizisi[*]}
+      do
+        if [[ ${dz} = $(realpath "${dizin}") ]]
+        then
+            printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin%/}"
+            return 1
+        fi
+      done
+      IFS=$ESKI_IFS
+
+      dizin_dizisi+=( "$(realpath "${dizin}")" )
+      printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
+        "${ad}" "${dizin%/}" "$(( ${#dizin_dizisi[@]} - 1 ))"
+
   # $dizin bir sayı ise
-  if [[ ${dizin} =~ ^-?[0-9]+([.|,][0-9]+)?$  ]]
+  elif [[ ${dizin} =~ ^-?[0-9]+([.|,][0-9]+)?$  ]]
   then
       # $dizin noktalı sayıysa tam kısmı al.
       dizin=${dizin%.*}
@@ -58,26 +78,6 @@ dond() {
           printf '%s: Girilen dizin indisi en fazla %d olabilir.\n' \
             "${ad}" "$(( ${#dizin_dizisi[@]} - 1 ))"
       fi
-
-  # $dizin bir dizinse
-  elif [[ -d ${dizin} ]]
-  then
-      ESKI_IFS=$IFS
-      IFS=$'\n'
-
-      for dz in ${dizin_dizisi[*]}
-      do
-        if [[ ${dz} = $(realpath "${dizin}") ]]
-        then
-            printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin%/}"
-            return 1
-        fi
-      done
-      IFS=$ESKI_IFS
-
-      dizin_dizisi+=( "$(realpath "${dizin}")" )
-      printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
-        "${ad}" "${dizin%/}" "$(( ${#dizin_dizisi[@]} - 1 ))"
 
   elif [[ ${dizin} = -@(-listele|l) ]]
   then

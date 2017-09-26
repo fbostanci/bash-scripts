@@ -1,10 +1,10 @@
 # Copyright (c) 2012-2017 Fatih Bostancı <faopera@gmail.com>
 # GPLv3
-# v1.3.9
+# v1.3.10
 # dizin tutucu ve dizinler arası hızlı geçiş
 
 dond() {
-  local surum='1.3.9'
+  local surum='1.3.10'
   local dizin="$1" ad=${FUNCNAME[0]} dz d s
   local DONDRC="$HOME/.dondrc"
 
@@ -38,15 +38,24 @@ dond() {
       do
         if [[ ${dz} = $(realpath -- "${dizin}") ]]
         then
-            printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dizin%/}"
-            return 1
+            #$dizin bir sayıysa ve bu sayı adıyla bir dizin daha
+            # önceden dizin_dizisi'ne eklenmişse o numaralı dizine geç.
+            if [[ -z $(tr -d '[0-9]' <<<$(basename -- "${dizin}")) && \
+                     $(basename -- "${dizin}") -lt ${#dizin_dizisi[@]} ]]
+            then
+                cd -- "${dizin_dizisi[$(basename -- "${dizin}")]}"
+                return 0
+            else
+                printf '%s: %s daha önceden eklenmiş.\n' "${ad}" "${dz%/}"
+                return 1
+            fi
         fi
       done
       IFS=$ESKI_IFS
 
       dizin_dizisi+=( "$(realpath -- "${dizin}")" )
       printf '%s: %s eklendi.\nToplam eklenmiş dizin: %d\n' \
-        "${ad}" "${dizin%/}" "$(( ${#dizin_dizisi[@]} - 1 ))"
+        "${ad}" "$(realpath -- "${dizin%/}")" "$(( ${#dizin_dizisi[@]} - 1 ))"
 
   # $dizin bir sayı ise
   elif [[ ${dizin} =~ ^-?[0-9]+([.|,][0-9]+)?$  ]]
@@ -69,7 +78,7 @@ dond() {
             # OLDPWD değeri şu anki dizinle değiştiği için
             # --önceki ile önceki bulunulan dizine geçmiyor.
             [[ $(pwd) = ${dizin_dizisi[$dizin]} ]] && return 0
-            cd "${dizin_dizisi[$dizin]}"
+            cd -- "${dizin_dizisi[$dizin]}"
           }
 
       # $dizin, dizin_dizisi eleman sayısından büyükse
@@ -93,7 +102,7 @@ dond() {
 
   elif [[ ${dizin} = -@(-[oö]nceki|[oö]) ]]
   then
-      cd - > /dev/null 2>&1 || \
+      cd -- - > /dev/null 2>&1 || \
         printf '%s: önceki dizin bulunmuyor.\n' "${ad}"
 
   elif [[ ${dizin} = -@(-sil|-remove|r) ]]
